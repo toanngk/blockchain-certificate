@@ -1,0 +1,15 @@
+### How to run:
+- Step 1: `cd backend`
+- Step 2: `npm install` (nếu chạy lần đầu)
+- Step 3: `node network1.js`
+    - Mỗi file network là một blockchain node.
+    - Tạo thêm node mới:
+        - Duplicate 1 file network
+        - Đổi **privateKey** và **publicKey** mới bằng file *gen_key.js*:
+            - backend> `cd utils`
+            - `node gen_key.js`
+        - Đổi **EXPRESS_PORT** và **PORT**
+- Step 4: **Mở Terminal mới**
+- Step 5: `cd frontend`
+- Step 6: `npm install` (nếu chạy lần đầu)
+- Step 7: `npm start`
