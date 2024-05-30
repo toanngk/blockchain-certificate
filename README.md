@@ -3,6 +3,7 @@
 - Step 2: `npm install` (nếu chạy lần đầu)
 - Step 3: `node network1.js`
     - Mỗi file network là một blockchain node.
+    - Chạy nhiều node: Mỗi node một terminal
     - Tạo thêm node mới:
         - Duplicate 1 file network
         - Đổi **privateKey** và **publicKey** mới bằng file *gen_key.js*:
