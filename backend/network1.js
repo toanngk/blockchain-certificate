@@ -149,12 +149,14 @@ app.get('/chain', (req, res) => {
 app.get('/validate', (req, res) => {
     console.log('Validation requested');
     if (TheChain.pendingData.length !== 0) {
-        TheChain.processPendingData(keyPair);
-        const addedBlock = TheChain.getLastBlock();
-        sendMessage(produceMessage("TYPE_REPLACE_CHAIN", addedBlock));
-        res.json({ message: 'New block added successfully', addedBlock });
-    } else {
-        res.send({ message: 'No block added' });
+        try {
+            TheChain.processPendingData(keyPair);
+            const addedBlock = TheChain.getLastBlock();
+            sendMessage(produceMessage("TYPE_REPLACE_CHAIN", addedBlock));
+            res.json({ message: 'New block added successfully', addedBlock });
+        } catch (error) {
+            res.json({ message: error.message });
+        }
     }
 });
 

@@ -1,10 +1,12 @@
+const { error } = require('console');
+
 const crypto = require('crypto'), SHA256 = message => crypto.createHash('sha256').update(message).digest('hex');
 const EC = require('elliptic').ec, ec = new EC('secp256k1');
 
 const VALIDATORS = [
     '04cc0406e668bd904dcda39550114739fe5364df261ee636ea28f4e4be17da7a6b28e8ba31c0166fc131234b85d6d91f832b0a5a3d53ba68ddb17edb60131dfbef', // Network1
-    '04220372613e4ea03ebe26b71526c3e5e67a7c8cc4fe15cf4fd46fd5d7be641848111e8053d225c9954c1a1a64489243420d774cca1328fe0ec609ac71ddb079a0' // Network2
 ];
+// '04220372613e4ea03ebe26b71526c3e5e67a7c8cc4fe15cf4fd46fd5d7be641848111e8053d225c9954c1a1a64489243420d774cca1328fe0ec609ac71ddb079a0' // Network2
 
 class Block {
     constructor(timestamp = "", data = [], validator = "") {
@@ -113,8 +115,12 @@ class Blockchain {
 
     processPendingData(validatorKey) {
         const newBlock = new Block(new Date().toISOString(), this.pendingData, validatorKey.getPublic('hex'));
-        this.addBlock(newBlock, validatorKey);
-        this.pendingData = [];
+        try {
+            this.addBlock(newBlock, validatorKey);
+            this.pendingData = [];
+        } catch (error) {
+            throw new Error(error.message);
+        }
     }
 
     static isValid(blockchain) {
