@@ -11,7 +11,7 @@ import './App.css';
 const App = () => {
     return (
         <Router>
-            <div className="App">
+            <div className="Header">
                 <nav className="nav-bar">
                     <Link to="/signin" className="nav-link">Đăng Nhập</Link>
                     <Link to="/signup" className="nav-link">Đăng Ký</Link>
@@ -20,6 +20,8 @@ const App = () => {
                     <Link to="/admin" className="nav-link">Quản Trị</Link>
                     <Link to="/test" className="nav-link">Test</Link>
                 </nav>
+            </div>
+            <div className="main-content">
                 <Routes>
                     <Route path="/signin" element={<SignIn />} />
                     <Route path="/signup" element={<SignUp />} />
@@ -36,8 +38,8 @@ const App = () => {
 
 const Home = () => {
     return (
-        <div className="App">
-            <header className="App-header">
+        <div className="Body">
+            <header className="body-content">
                 <h1>Welcome to the Blockchain Certificate App</h1>
                 <p>Use the navigation links above to get started.</p>
             </header>
