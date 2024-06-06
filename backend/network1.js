@@ -21,7 +21,7 @@ const server = new WS.Server({ port: PORT });
 
 let opened = [], connected = [];
 
-console.log(`Node is istening on port ${PORT}...`);
+console.log(`Node is listening on port ${PORT}...`);
 
 server.on('connection', async (socket, req) => {
     socket.on('message', message => {
