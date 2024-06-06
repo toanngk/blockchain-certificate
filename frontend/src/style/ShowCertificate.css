@@ -1,0 +1,36 @@
+/* ShowCertificate.css */
+.certificate-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    margin: 2rem auto;
+    box-sizing: border-box;
+}
+
+.certificate-container h1 {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.certificate-container p {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    color: #333;
+}
+
+.certificate-container .label {
+    font-weight: bold;
+    color: #555;
+}
+
+.no-data {
+    text-align: center;
+    font-size: 1.25rem;
+    color: #777;
+    margin-top: 2rem;
+}

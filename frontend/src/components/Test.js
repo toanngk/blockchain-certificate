@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import '../style/Test.css'; // Import the CSS file for styling
 
 const EXPRESS_API_URL = 'http://localhost:8080';
 
@@ -31,7 +32,8 @@ const Test = () => {
                 setAddMessage(res.data.message);
             });
     };
-    const handleValidate = (e) => {
+
+    const handleValidate = () => {
         axios.get(`${EXPRESS_API_URL}/validate`)
             .then((res) => {
                 console.log(res);
@@ -42,7 +44,7 @@ const Test = () => {
             });
     };
 
-    const handleGetChain = (e) => {
+    const handleGetChain = () => {
         axios.get(`${EXPRESS_API_URL}/chain`)
             .then((res) => {
                 console.log(res);
@@ -52,91 +54,90 @@ const Test = () => {
 
     const renderObject = (obj) => {
         return (
-            // return Object.entries(obj).map(([key, value]) => (
-            <pre style={{ marginBottom: '10px', textAlign: 'left', textWrap: 'wrap', wordWrap: 'break-word', wordBreak: 'break-all' }}>
-                {/* <div key={key} style={{ marginBottom: '10px', textAlign: 'left', textWrap: 'wrap', wordWrap: 'break-word', wordBreak: 'break-all' }}>
-                    <strong>{key}:</strong> {typeof value === 'object' ? renderObject(value) : value}
-                </div> */}
+            <pre className="rendered-object">
                 {JSON.stringify(obj, null, 2)}
             </pre>
-            // ));
         );
     };
 
     return (
-        <div>
-            <div>
+        <div className="test-container">
+            <div className="test-form">
                 <h2>Test Add</h2>
                 <form onSubmit={handleSubmit}>
-                    <div>
+                    <div className="form-group">
                         <label>ID:</label>
                         <input
                             type="number"
                             value={id}
                             onChange={(e) => setId(e.target.value)}
+                            className="form-control"
                         />
                     </div>
-                    <div>
+                    <div className="form-group">
                         <label>Tên:</label>
                         <input
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
+                            className="form-control"
                         />
                     </div>
-                    <div>
+                    <div className="form-group">
                         <label>Chuyên ngành/Khoá học:</label>
                         <input
                             type="text"
                             value={course}
                             onChange={(e) => setCourse(e.target.value)}
+                            className="form-control"
                         />
                     </div>
-                    <div>
+                    <div className="form-group">
                         <label>Điểm:</label>
                         <input
                             type="number"
                             value={grade}
                             onChange={(e) => setGrade(e.target.value)}
+                            className="form-control"
                         />
                     </div>
-                    <div>
+                    <div className="form-group">
                         <label>Người cấp:</label>
                         <input
                             type="text"
                             value={issuer}
                             onChange={(e) => setIssuer(e.target.value)}
+                            className="form-control"
                         />
                     </div>
-                    <div>
+                    <div className="form-group">
                         <label>Ngày cấp:</label>
                         <input
                             type="date"
                             value={issuedDate}
                             onChange={(e) => setIssuedDate(e.target.value)}
+                            className="form-control"
                         />
                     </div>
-                    <button type="submit">Thêm</button>
+                    <button type="submit" className="btn-submit">Thêm</button>
                 </form>
                 <h3>{addMessage}</h3>
             </div>
-            <div>
-                <button onClick={handleValidate}>Test Validate</button>
-                <button onClick={handleGetChain}>Test Get Chain</button>
+            <div className="test-buttons">
+                <button onClick={handleValidate} className="btn-action">Test Validate</button>
+                <button onClick={handleGetChain} className="btn-action">Test Get Chain</button>
             </div>
-            <div>
+            <div className="test-results">
                 <h2>New Block:</h2>
                 <h3>{validateMessage}</h3>
                 {addedBlock ? (
                     renderObject(addedBlock)
-                    // JSON.stringify(addedBlock, null, 2)
                 ) : (
                     <p>Added block will be shown here</p>
                 )}
                 <h2>Chain:</h2>
                 {chain ? (
                     renderObject(chain)
-                    // JSON.stringify(chain, null, 2)
                 ) : (
                     <p>Blockchain will be shown here</p>
                 )}
