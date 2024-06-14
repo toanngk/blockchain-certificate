@@ -1,16 +1,24 @@
 import React, { useState } from 'react';
-import '../style/AdminAddInfo.css'; // Import the CSS file for styling
+import { useNavigate } from 'react-router-dom';
+import '../style/AdminAddInfo.css';
 
-const AdminAddInfo = () => {
+const AdminAddInfo = ({ userRole }) => { // Receive userRole as prop
     const [name, setName] = useState('');
     const [certificateId, setCertificateId] = useState('');
     const [date, setDate] = useState('');
     const [status, setStatus] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
         // Thêm logic thêm thông tin ở đây
     };
+
+    if (userRole !== 'Admin') {
+        // Redirect user if not an admin
+        navigate('/'); // Redirect to home or another route
+        return null; // Return null to prevent rendering anything
+    }
 
     return (
         <div className="admin-addinfo-container">

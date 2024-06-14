@@ -1,13 +1,36 @@
 import React, { useState } from 'react';
-import '../style/SignIn.css'; // Import the CSS file for styling
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import '../style/SignIn.css';
 
-const SignIn = () => {
-    const [email, setEmail] = useState('');
+const SignIn = ({ handleLogin }) => {
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [message, setMessage] = useState('');
+    const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Thêm logic đăng nhập ở đây
+        setError('');
+        setMessage('');
+
+        try {
+            const response = await axios.post('http://localhost:8888/signin', {
+                username: username,
+                password: password
+            });
+
+            setMessage(response.data.message);
+            handleLogin(username, password);
+            navigate('/search');
+        } catch (err) {
+            if (err.response) {
+                setError(err.response.data);
+            } else {
+                setError('Error signing in');
+            }
+        }
     };
 
     return (
@@ -16,11 +39,11 @@ const SignIn = () => {
                 <h2>Đăng Nhập</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label>Email:</label>
+                        <label>Tên Đăng Nhập:</label>
                         <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
                             className="form-control"
                         />
                     </div>
@@ -33,6 +56,8 @@ const SignIn = () => {
                             className="form-control"
                         />
                     </div>
+                    {error && <p className="error-message">{error}</p>}
+                    {message && <p className="success-message">{message}</p>}
                     <button type="submit" className="btn-submit">Đăng Nhập</button>
                 </form>
             </div>
