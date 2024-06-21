@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../style/Test.css'; // Import the CSS file for styling
+import '../style/Test.css';
 
 const EXPRESS_API_URL = 'http://localhost:8080';
 
-const Test = () => {
+const Test = ({ userRole }) => {
     const [studentId, setStudentId] = useState('');
     const [subject, setSubject] = useState('');
     const [grade, setGrade] = useState('');
@@ -13,6 +14,7 @@ const Test = () => {
     const [addedBlock, setAddedBlock] = useState('');
     const [addMessage, setAddMessage] = useState('');
     const [validateMessage, setValidateMessage] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -55,6 +57,12 @@ const Test = () => {
             </pre>
         );
     };
+
+    if (userRole !== 'Admin') {
+        // Redirect user if not an admin
+        navigate('/'); // Redirect to home or another route
+        return null; // Return null to prevent rendering anything
+    }
 
     return (
         <div className="test-container">
