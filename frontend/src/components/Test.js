@@ -5,11 +5,9 @@ import '../style/Test.css'; // Import the CSS file for styling
 const EXPRESS_API_URL = 'http://localhost:8080';
 
 const Test = () => {
-    const [id, setId] = useState('');
-    const [name, setName] = useState('');
-    const [course, setCourse] = useState('');
+    const [studentId, setStudentId] = useState('');
+    const [subject, setSubject] = useState('');
     const [grade, setGrade] = useState('');
-    const [issuer, setIssuer] = useState('');
     const [issuedDate, setIssuedDate] = useState('');
     const [chain, setChain] = useState('');
     const [addedBlock, setAddedBlock] = useState('');
@@ -19,11 +17,9 @@ const Test = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         const data = {
-            id: Number(id),
-            name: name,
-            course: course,
+            studentId: Number(studentId),
+            subject: subject,
             grade: Number(grade),
-            issuer: issuer,
             issuedDate: issuedDate
         };
         axios.post(`${EXPRESS_API_URL}/add`, data)
@@ -69,26 +65,17 @@ const Test = () => {
                         <label>ID:</label>
                         <input
                             type="number"
-                            value={id}
-                            onChange={(e) => setId(e.target.value)}
+                            value={studentId}
+                            onChange={(e) => setStudentId(e.target.value)}
                             className="form-control"
                         />
                     </div>
                     <div className="form-group">
-                        <label>Tên:</label>
+                        <label>Môn học:</label>
                         <input
                             type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="form-control"
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>Chuyên ngành/Khoá học:</label>
-                        <input
-                            type="text"
-                            value={course}
-                            onChange={(e) => setCourse(e.target.value)}
+                            value={subject}
+                            onChange={(e) => setSubject(e.target.value)}
                             className="form-control"
                         />
                     </div>
@@ -98,15 +85,6 @@ const Test = () => {
                             type="number"
                             value={grade}
                             onChange={(e) => setGrade(e.target.value)}
-                            className="form-control"
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>Người cấp:</label>
-                        <input
-                            type="text"
-                            value={issuer}
-                            onChange={(e) => setIssuer(e.target.value)}
                             className="form-control"
                         />
                     </div>

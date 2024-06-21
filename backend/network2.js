@@ -1,7 +1,7 @@
 const crypto = require('crypto'), SHA256 = message => crypto.createHash('sha256').update(message).digest('hex');
 const EC = require('elliptic').ec, ec = new EC('secp256k1');
-const { parse } = require('path');
-const { Block, Blockchain, TheChain } = require('./blockchain');
+const { Blockchain } = require('./blockchain');
+const { getBlockchain, saveBlockchain } = require('./sharedBlockchain');
 
 const privateKey = 'd0351a52b188b5df78e71ab94a05ee61010cccc89b758c13605595b271fd675d';
 const keyPair = ec.keyFromPrivate(privateKey, 'hex');
@@ -20,6 +20,7 @@ const PEERS = ['ws://localhost:8000'];
 const MY_ADDRESS = `ws://localhost:${PORT}`;
 const server = new WS.Server({ port: PORT });
 
+const blockchain = getBlockchain();
 let opened = [], connected = [];
 
 console.log(`Node is listening on port ${PORT}...`);
@@ -37,29 +38,28 @@ server.on('connection', async (socket, req) => {
             // Ask for adding new data => Add data to the blockchain pending data
             case "TYPE_CREATE_DATA":
                 const data = _message.data;
-                TheChain.addData(data);
-
+                blockchain.addData(data);
                 break;
             // Ask for adding new block => Add the new block to the chain if valid
             case "TYPE_REPLACE_CHAIN":
                 const newBlock = _message.data;
                 const tempChain = new Blockchain();
-                tempChain.chain = TheChain.chain.concat([newBlock]);
+                tempChain.chain = blockchain.chain.concat([newBlock]);
                 if (Blockchain.isValid(tempChain)) {
-                    TheChain.chain = tempChain.chain;
-                    TheChain.pendingData = [];
+                    blockchain.chain = tempChain.chain;
+                    blockchain.pendingData = [];
                 }
                 break;
             // For new nodes to get the chain
             // Request the chain => Send the chain blocks one by one
             case "TYPE_REQUEST_CHAIN":
                 const chainSocket = opened.filter(node => node.address === _message.data)[0].socket;
-                for (let i = 0; i < TheChain.chain.length; i++) {
+                for (let i = 0; i < blockchain.chain.length; i++) {
                     chainSocket.send(JSON.stringify(produceMessage(
                         "TYPE_SEND_CHAIN",
                         {
-                            block: TheChain.chain[i],
-                            finished: i === TheChain.chain.length - 1
+                            block: blockchain.chain[i],
+                            finished: i === blockchain.chain.length - 1
                         }
                     )));
                 }
@@ -72,7 +72,7 @@ server.on('connection', async (socket, req) => {
                 } else {
                     tempChain.chain.push(block);
                     if (Blockchain.isValid(tempChain)) {
-                        TheChain.chain = tempChain.chain;
+                        blockchain.chain = tempChain.chain;
                     }
                     tempChain = new Blockchain();
                 }
@@ -82,13 +82,13 @@ server.on('connection', async (socket, req) => {
                 opened.filter(node => node.address === _message.data)[0].socket.send(
                     JSON.stringify(produceMessage(
                         "TYPE_SEND_INFO",
-                        [TheChain.pendingData]
+                        [blockchain.pendingData]
                     ))
                 );
                 break;
             // Receive the chain pending data => Add the chain pending data to the blockchain
             case "TYPE_SEND_INFO":
-                TheChain.pendingData = _message.data;
+                blockchain.pendingData = _message.data;
                 break;
         }
     });
@@ -144,15 +144,16 @@ app.listen(EXPRESS_PORT, () => {
 
 app.get('/chain', (req, res) => {
     console.log('Chain requested');
-    res.json(TheChain);
+    res.json(blockchain);
 });
 
 app.get('/validate', (req, res) => {
     console.log('Validation requested');
-    if (TheChain.pendingData.length !== 0) {
+    if (blockchain.pendingData.length !== 0) {
         try {
-            TheChain.processPendingData(keyPair);
-            const addedBlock = TheChain.getLastBlock();
+            blockchain.processPendingData(keyPair);
+            saveBlockchain(blockchain);
+            const addedBlock = blockchain.getLastBlock();
             sendMessage(produceMessage("TYPE_REPLACE_CHAIN", addedBlock));
             res.json({ message: 'New block added successfully', addedBlock });
         } catch (error) {
@@ -165,7 +166,8 @@ app.post('/add', (req, res) => {
     console.log('Data creation requested');
     const newData = req.body;
     console.log(newData);
-    if (TheChain.addData(newData)) {
+    if (blockchain.addData(newData)) {
+        saveBlockchain(blockchain);
         sendMessage(produceMessage("TYPE_CREATE_DATA", newData));
         res.send({ message: "Data added successfully" });
     } else {
@@ -173,44 +175,4 @@ app.post('/add', (req, res) => {
     }
 });
 
-// // --------------------------------------------------
-// // EXAMPLE USAGE
-// // Add data periodically and check for processing
-// setInterval(() => {
-//     const newData = {
-//         "id": Math.floor(Math.random() * 100000),
-//         "name": "Random Name",
-//         "course": "Blockchain Fundamentals",
-//         "grade": Math.floor(Math.random() * 100),
-//         "issuer": "University of Blockchain",
-//         "issueDate": new Date().toISOString().split('T')[0]
-//     };
-//     TheChain.addData(newData);
-//     sendMessage(produceMessage("TYPE_CREATE_DATA", newData));
-//     printBlockchain();
-// }, 3000);
-
-// setInterval(() => {
-//     printBlockchain();
-// }, 10000);
-
-// function printBlockchain() {
-//     process.stdout.write('\x1Bc')
-//     console.log(`Port: ${PORT}`);
-//     console.log(TheChain);
-// }
-
-// // Add new block to the chain every 10 seconds if there is pending data
-// setInterval(() => {
-//     if (TheChain.pendingData.length !== 0) {
-//         TheChain.processPendingData(keyPair);
-//         sendMessage(produceMessage("TYPE_REPLACE_CHAIN", TheChain.getLastBlock()));
-//     }
-//     printBlockchain();
-// }, 10000);
-
-// function printBlockchain() {
-//     process.stdout.write('\x1Bc');
-//     console.log(`Port: ${PORT}`);
-//     console.log(TheChain);
-// }
+console.log(blockchain);

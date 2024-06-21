@@ -1,5 +1,3 @@
-const { error } = require('console');
-
 const crypto = require('crypto'), SHA256 = message => crypto.createHash('sha256').update(message).digest('hex');
 const EC = require('elliptic').ec, ec = new EC('secp256k1');
 
@@ -86,11 +84,9 @@ class Blockchain {
 
         // Required properties and their types
         const requiredFields = {
-            id: 'number',
-            name: 'string',
-            course: 'string',
+            studentId: 'number',
+            subject: 'string',
             grade: 'number',
-            issuer: 'string',
             issuedDate: 'string',
         };
 
@@ -140,7 +136,4 @@ class Blockchain {
     }
 }
 
-const TheChain = new Blockchain();
-console.log(TheChain.getLastBlock());
-
-module.exports = { Block, Blockchain, TheChain };
+module.exports = { Blockchain };
