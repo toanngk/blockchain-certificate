@@ -7,10 +7,11 @@ const privateKey = 'd0351a52b188b5df78e71ab94a05ee61010cccc89b758c13605595b271fd
 const keyPair = ec.keyFromPrivate(privateKey, 'hex');
 const publicKey = keyPair.getPublic('hex'); // 04220372613e4ea03ebe26b71526c3e5e67a7c8cc4fe15cf4fd46fd5d7be641848111e8053d225c9954c1a1a64489243420d774cca1328fe0ec609ac71ddb079a0
 
-// Express
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const bodyParser = require('body-parser');
+const mysql = require('mysql2');
 const EXPRESS_PORT = 8081;
 
 // WebSocket Server
@@ -137,6 +138,23 @@ PEERS.forEach(peer => connect(peer));
 // Express
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.json());
+
+const con = mysql.createConnection({
+    host: 'localhost',
+    port: '3306',
+    user: 'root',
+    password: 'toanmysql',
+    database: 'UniversityDB'
+});
+
+con.connect((err) => {
+    if (err) {
+        console.error('Error connecting to the database:', err);
+        return;
+    }
+    console.log('Connected to the database');
+});
 
 app.listen(EXPRESS_PORT, () => {
     console.log(`Server is listening on port ${EXPRESS_PORT}...`);
@@ -173,6 +191,71 @@ app.post('/add', (req, res) => {
     } else {
         res.send({ message: "Data is not valid" });
     }
+});
+
+// SignIn API
+app.post('/signin', (req, res) => {
+    const { username, password } = req.body;
+
+    const sql = 'SELECT * FROM Users WHERE Username = ?';
+    con.query(sql, [username], (err, results) => {
+        if (err) {
+            console.error('Error executing query:', err);
+            res.status(500).send('Error executing query');
+            return;
+        }
+
+        if (results.length === 0) {
+            console.error('No user found with the provided username');
+            res.status(401).send('Invalid username');
+            return;
+        }
+
+        const user = results[0];
+
+        if (password !== user.Password) {
+            console.error('Password does not match');
+            res.status(401).send('Invalid password');
+            return;
+        }
+
+        // Include user role in the response
+        res.status(200).send({ message: 'Sign in successful', user: { username: user.Username, role: user.Role } });
+    });
+});
+
+
+// SignUp API
+app.post('/signup', (req, res) => {
+    const { username, fullName, password, role } = req.body;
+
+    // Check if the username already exists
+    const checkUserSql = 'SELECT * FROM Users WHERE Username = ?';
+    con.query(checkUserSql, [username], (err, results) => {
+        if (err) {
+            console.error('Error executing query:', err);
+            res.status(500).send('Error executing query');
+            return;
+        }
+
+        if (results.length > 0) {
+            console.error('User already exists');
+            res.status(409).send('User already exists');
+            return;
+        }
+
+        // Create a new user
+        const createUserSql = 'INSERT INTO Users (Username, FullName, Password, Role) VALUES (?, ?, ?, ?)';
+        con.query(createUserSql, [username, fullName, password, role], (err, result) => {
+            if (err) {
+                console.error('Error creating user:', err);
+                res.status(500).send('Error creating user');
+                return;
+            }
+            console.log('User created successfully');
+            res.status(201).send('User created successfully');
+        });
+    });
 });
 
 console.log(blockchain);

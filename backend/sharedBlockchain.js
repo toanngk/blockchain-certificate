@@ -7,7 +7,12 @@ function getBlockchain() {
     let blockchain;
     try {
         const data = fs.readFileSync(FILE_NAME, 'utf8');
-        blockchain = JSON.parse(data);
+        const parsedData = JSON.parse(data);
+
+        // Create a new instance of Blockchain and copy properties
+        blockchain = new Blockchain();
+        blockchain.chain = parsedData.chain;
+        blockchain.pendingData = parsedData.pendingData;
     } catch (err) {
         blockchain = new Blockchain();
     }

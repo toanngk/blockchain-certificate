@@ -16,7 +16,7 @@ const App = () => {
     // Function to handle user login
     const handleLogin = async (username, password) => {
         try {
-            const response = await axios.post('http://localhost:8888/signin', { username, password });
+            const response = await axios.post('http://localhost:8080/signin', { username, password });
             const { user } = response.data;
             setLoggedIn(true);
             setUserRole(user.role);

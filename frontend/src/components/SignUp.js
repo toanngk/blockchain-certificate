@@ -15,7 +15,7 @@ const SignUp = () => {
         setMessage('');
 
         try {
-            const response = await axios.post('http://localhost:8888/signup', {
+            const response = await axios.post('http://localhost:8080/signup', {
                 username,
                 fullName,
                 password,
