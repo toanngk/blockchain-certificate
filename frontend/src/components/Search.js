@@ -15,7 +15,7 @@ const Search = () => {
                 <h2>Tìm Kiếm Chứng Chỉ</h2>
                 <form onSubmit={handleSearch}>
                     <div className="form-group">
-                        <label>Tìm Kiếm:</label>
+                        <label>Mã ID sinh viên:</label>
                         <input
                             type="text"
                             value={query}

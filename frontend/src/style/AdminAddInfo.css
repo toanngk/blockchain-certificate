@@ -1,40 +1,43 @@
-.admin-addinfo-container {
+.addInfo-container {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    height: 100vh;
+    justify-content: center;
+    padding: 20px;
     background-color: #f0f2f5;
+    box-sizing: border-box;
 }
 
-.admin-addinfo-form {
+.addInfo-form {
     background: white;
     padding: 2rem;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
     box-sizing: border-box;
+    margin-bottom: 2rem;
 }
 
-.admin-addinfo-form h2 {
+.addInfo-form h2 {
     margin-bottom: 1.5rem;
     text-align: center;
     font-size: 1.5rem;
     color: #333;
 }
 
-.admin-addinfo-form .form-group {
+.addInfo-form .form-group {
     margin-bottom: 1rem;
 }
 
-.admin-addinfo-form label {
+.addInfo-form label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: bold;
     color: #333;
 }
 
-.admin-addinfo-form .form-control {
+.addInfo-form .form-control {
     width: 100%;
     padding: 0.5rem;
     border: 1px solid #ccc;
@@ -42,7 +45,7 @@
     box-sizing: border-box;
 }
 
-.admin-addinfo-form .btn-submit {
+.addInfo-form .btn-submit {
     width: 100%;
     padding: 0.75rem;
     background-color: #282c34;
@@ -54,6 +57,55 @@
     transition: background-color 0.3s ease;
 }
 
-.admin-addinfo-form .btn-submit:hover {
+.addInfo-form .btn-submit:hover {
     background-color: #404046;
+}
+
+.addInfo-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 2rem;
+}
+
+.addInfo-buttons .btn-action {
+    width: 100%;
+    padding: 0.75rem 1.5rem;
+    background-color: #282c34;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.addInfo-buttons .btn-action:hover {
+    background-color: #404046;
+}
+
+.addInfo-results {
+    width: 100%;
+    max-width: 500px;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+.addInfo-results h2 {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.rendered-object {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
