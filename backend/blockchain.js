@@ -48,6 +48,10 @@ class Blockchain {
         return this.chain[this.chain.length - 1];
     }
 
+    getLastBlockHash() {
+    return this.getLastBlock().hash;
+}
+
     addBlock(newBlock, validatorKey) {
         newBlock.prevHash = this.getLastBlock().hash;
         newBlock.hash = Block.getHash(newBlock);

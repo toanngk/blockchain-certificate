@@ -275,28 +275,55 @@ app.post('/addStudent', (req, res) => {
 });
 
 app.get('/getLastBlockHash', (req, res) => {
-    try {
-        const lastBlockHash = getLastBlockHash();
-        res.json({ lastBlockHash });
-    } catch (error) {
-        console.error('Error fetching last block hash:', error);
-        res.status(500).json({ error: 'Failed to retrieve last block hash' });
-    }
+    console.log('Fetching last block hash');
+    const lastBlockHash = blockchain.getLastBlockHash();
+    res.json({ lastBlockHash });
 });
 
 app.post('/addSemester', (req, res) => {
-    const { currentHash } = req.body;
+    const { semesterId, currentHash } = req.body;
 
-    // Insert currentHash into Semester table
-    const sql = 'INSERT INTO Semester (BlockchainId) VALUES (?)';
-    con.query(sql, [currentHash], (err, result) => {
+    const sql = 'INSERT INTO Semester (SemesterID, BlockchainID) VALUES (?, ?)';
+    con.query(sql, [semesterId, currentHash], (err, result) => {
         if (err) {
             console.error('Error adding semester data:', err);
             res.status(500).json({ message: 'Error adding semester data' });
             return;
         }
-        console.log('Semester data added successfully');
+        console.log('Semester data added successfully', result);
         res.status(201).json({ message: 'Semester data added successfully' });
+    });
+});
+
+
+
+app.post('/addStudentSemester', (req, res) => {
+    const { studentId, semesterId } = req.body;
+
+    // Check if student is already in the semester
+    const checkSql = 'SELECT * FROM StudentSemester WHERE StudentID = ? AND SemesterID = ?';
+    con.query(checkSql, [studentId, semesterId], (err, results) => {
+        if (err) {
+            console.error('Error executing query:', err);
+            res.status(500).send('Error executing query');
+            return;
+        }
+
+        if (results.length > 0) {
+            res.status(200).json({ message: 'Student already in semester' });
+        } else {
+            // Insert new record into StudentSemester table
+            const insertSql = 'INSERT INTO StudentSemester (StudentID, SemesterID) VALUES (?, ?)';
+            con.query(insertSql, [studentId, semesterId], (err, result) => {
+                if (err) {
+                    console.error('Error adding student to semester:', err);
+                    res.status(500).send('Error adding student to semester');
+                    return;
+                }
+                console.log('Student added to semester successfully');
+                res.status(201).json({ message: 'Student added to semester successfully' });
+            });
+        }
     });
 });
 

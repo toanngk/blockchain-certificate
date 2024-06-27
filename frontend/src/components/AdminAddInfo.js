@@ -8,6 +8,7 @@ const EXPRESS_API_URL = 'http://localhost:8080';
 const AddInfo = ({ userRole }) => {
     // State for adding grades
     const [studentId, setStudentId] = useState('');
+    const [semesterId, setSemesterId] = useState('');
     const [subject, setSubject] = useState('');
     const [grade, setGrade] = useState('');
     const [issuedDate, setIssuedDate] = useState('');
@@ -26,19 +27,30 @@ const AddInfo = ({ userRole }) => {
 
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const data = {
             studentId: Number(studentId),
+            semesterId: Number(semesterId),
             subject: subject,
             grade: Number(grade),
             issuedDate: issuedDate
         };
-        axios.post(`${EXPRESS_API_URL}/add`, data)
-            .then((res) => {
-                console.log(res);
-                setAddMessage(res.data.message);
-            });
+
+        try {
+            // Add student that anticiapte semester if not already added
+            const response = await axios.post(`${EXPRESS_API_URL}/addStudentSemester`, { studentId: Number(studentId), semesterId: Number(semesterId) });
+            if (response.data.message !== 'Student already in semester') {
+                console.log(response.data.message);
+            }
+
+            // Then, add the grade
+            const res = await axios.post(`${EXPRESS_API_URL}/add`, data);
+            console.log(res);
+            setAddMessage(res.data.message);
+        } catch (error) {
+            console.error('Error submitting data:', error);
+        }
     };
 
     const handleValidate = () => {
@@ -57,26 +69,25 @@ const AddInfo = ({ userRole }) => {
             });
     };
 
+    const addSemester = async () => {
+        try {
+            // Fetch last block hash
+            const res = await axios.get(`${EXPRESS_API_URL}/getLastBlockHash`);
+            const lastBlockHash = res.data.lastBlockHash;
 
-    const addSemester = () => {
-        axios.get(`${EXPRESS_API_URL}/getLastBlockHash`)
-            .then((res) => {
-                const lastBlockHash = res.data.lastBlockHash;
-                // Add the retrieved hash to the Semester table
-                axios.post(`${EXPRESS_API_URL}/addSemester`, { blockchainId: lastBlockHash })
-                    .then((res) => {
-                        console.log(res);
-                        setSemesterMessage(res.data.message);
-                    })
-                    .catch((err) => {
-                        console.error('Error adding semester data:', err);
-                        setSemesterMessage('Error adding semester data');
-                    });
-            })
-            .catch((err) => {
-                console.error('Error fetching last block hash:', err);
-                setSemesterMessage('Error fetching last block hash');
-            });
+            // Call backend to add semester with both SemesterID and BlockchainID
+            const semesterData = {
+                semesterId: Number(semesterId),
+                currentHash: lastBlockHash
+            };
+
+            const addSemesterRes = await axios.post(`${EXPRESS_API_URL}/addSemester`, semesterData);
+            console.log('Semester add response:', addSemesterRes);
+            setSemesterMessage(addSemesterRes.data.message);
+        } catch (error) {
+            console.error('Error adding semester data:', error);
+            setSemesterMessage('Error adding semester data');
+        }
     };
 
     const handleGetChain = () => {
@@ -133,6 +144,15 @@ const AddInfo = ({ userRole }) => {
                             type="number"
                             value={studentId}
                             onChange={(e) => setStudentId(e.target.value)}
+                            className="form-control"
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Mã Học kỳ:</label>
+                        <input
+                            type="number"
+                            value={semesterId}
+                            onChange={(e) => setSemesterId(e.target.value)}
                             className="form-control"
                         />
                     </div>
@@ -196,7 +216,7 @@ const AddInfo = ({ userRole }) => {
             </div>
 
             <div className="addInfo-form">
-                <h2>Thêm dữ liệu và Block</h2>
+                <h2>Thêm dữ liệu vào Block</h2>
                 <div className="test-buttons">
                     <button onClick={handleValidate} className="btn-action">Validate</button>
                     <button onClick={handleGetChain} className="btn-action">Get Chain</button>
