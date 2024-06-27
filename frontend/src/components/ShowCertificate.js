@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../style/ShowCertificate.css'; // Import the CSS file for styling
+import '../style/ShowCertificate.css';
+import { useNavigate } from 'react-router-dom';
 
 const EXPRESS_API_URL = 'http://localhost:8080';
 
@@ -9,9 +10,13 @@ const ShowData = ({ userRole }) => {
     const [studentData, setStudentData] = useState([]);
     const [studentSemesterData, setStudentSemesterData] = useState([]);
     const [userData, setUserData] = useState([]);
+    const [chain, setChain] = useState(null); // State to hold blockchain data
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchData();
+        fetchBlockchainData(); // Fetch blockchain data on component mount
     }, []);
 
     const fetchData = () => {
@@ -20,7 +25,6 @@ const ShowData = ({ userRole }) => {
                 console.log(res);
                 const { semesters, students, studentSemesters, users } = res.data;
 
-                // Assuming the response structure matches the expected structure from MySQL tables
                 setSemesterData(semesters);
                 setStudentData(students);
                 setStudentSemesterData(studentSemesters);
@@ -31,14 +35,38 @@ const ShowData = ({ userRole }) => {
             });
     };
 
+    const fetchBlockchainData = () => {
+        axios.get(`${EXPRESS_API_URL}/chain`)
+            .then((res) => {
+                console.log(res);
+                setChain(res.data);
+            })
+            .catch((err) => {
+                console.error('Error fetching blockchain data:', err);
+            });
+    };
+
+    if (userRole !== 'Admin') {
+        navigate('/'); // Redirect to home or another route if not an admin
+        return null; // Return null to prevent rendering anything
+    }
+
+    const renderObject = (obj) => {
+        return (
+            <pre className="rendered-object">
+                {JSON.stringify(obj, null, 2)}
+            </pre>
+        );
+    };
+
     return (
         <div className="certificate-container">
-            <h1>University Database Details</h1>
+            <h1>Dữ liệu Đại học</h1>
             <div className="test-buttons">
-                <button onClick={fetchData}>Refresh Data</button>
+                <button onClick={fetchData}>Làm mới</button>
             </div>
             <div className="box-content">
-                <h2>Semesters:</h2>
+                <h2>Học kỳ:</h2>
                 {semesterData.length > 0 ? (
                     <table className="data-table">
                         <thead>
@@ -59,7 +87,7 @@ const ShowData = ({ userRole }) => {
                 ) : (
                     <p className="no-data">No semesters found</p>
                 )}
-                <h2>Students:</h2>
+                <h2>Sinh viên:</h2>
                 {studentData.length > 0 ? (
                     <table className="data-table">
                         <thead>
@@ -80,7 +108,7 @@ const ShowData = ({ userRole }) => {
                 ) : (
                     <p className="no-data">No students found</p>
                 )}
-                <h2>Student Semesters:</h2>
+                <h2>Sinh viên tham gia học kỳ:</h2>
                 {studentSemesterData.length > 0 ? (
                     <table className="data-table">
                         <thead>
@@ -101,7 +129,7 @@ const ShowData = ({ userRole }) => {
                 ) : (
                     <p className="no-data">No student semesters found</p>
                 )}
-                <h2>Users:</h2>
+                <h2>Người dùng:</h2>
                 {userData.length > 0 ? (
                     <table className="data-table">
                         <thead>
@@ -125,8 +153,18 @@ const ShowData = ({ userRole }) => {
                     <p className="no-data">No users found</p>
                 )}
             </div>
+
+            <h2>Blockchain</h2>
+            {/* Display blockchain data */}
+            <div className="blockchain-section">
+                {chain ? (
+                    renderObject(chain)
+                ) : (
+                    <p>Blockchain data will be shown here</p>
+                )}
+            </div>
         </div>
     );
-}
+};
 
 export default ShowData;

@@ -10,7 +10,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* Center align items horizontally */
 }
 
 .certificate-container h1 {
@@ -65,13 +64,17 @@
     background-color: #404046;
 }
 
-.test-results {
-    margin-top: 1rem;
+.blockchain-section {
+    margin-top: 2rem;
+    width: 95%;
+    border: 1px solid #ccc;
+    padding: 1rem;
+    border-radius: 8px;
 }
 
-.no-data {
-    text-align: center;
-    font-size: 1.25rem;
-    color: #777;
-    margin-top: 2rem;
+.blockchain-section .rendered-object {
+    white-space: pre-wrap;
+    /* Preserve whitespace and wrap text */
+    font-size: 0.875rem;
+    color: #555;
 }

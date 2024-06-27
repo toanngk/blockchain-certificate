@@ -45,7 +45,7 @@ const App = () => {
                     {loggedIn && userRole === 'Admin' && (
                         <>
                             <Link to="/search" className="nav-link">Tìm Kiếm</Link>
-                            <Link to="/certificate" className="nav-link">Chứng Chỉ</Link>
+                            <Link to="/certificate" className="nav-link">Dữ liệu</Link>
                             <Link to="/admin" className="nav-link">Quản Trị</Link>
                             {/* <Link to="/test" className="nav-link">Test</Link> */}
                             <button onClick={handleLogout} className="nav-link">Đăng Xuất</button>
@@ -64,7 +64,7 @@ const App = () => {
                     <Route path="/signin" element={<SignIn handleLogin={handleLogin} />} />
                     <Route path="/signup" element={<SignUp handleLogin={handleLogin} />} />
                     <Route path="/search" element={<Search />} />
-                    <Route path="/certificate" element={<ShowCertificate />} />
+                    <Route path="/certificate" element={<ShowCertificate userRole={userRole}/>} />
                     <Route path="/admin" element={<AdminAddInfo userRole={userRole} />} />
                     <Route path="/" element={<Home />} />
                     <Route path="/test" element={<Test userRole={userRole} />} />

@@ -45,7 +45,7 @@ const Search = () => {
         <div className="search-container">
             <div className="search-form-container">
                 <div className="search-form">
-                    <h2>Tìm Kiếm Chứng Chỉ</h2>
+                    <h2>Tìm Kiếm Điểm</h2>
                     <form onSubmit={handleSearch}>
                         <div className="form-group">
                             <label>Mã Học kỳ:</label>
@@ -64,7 +64,7 @@ const Search = () => {
             {/* Display block data as a table */}
             {blockData && (
                 <div className="block-data">
-                    <h3>Dữ liệu của block</h3>
+                    <h3>Điểm số cả Học kỳ</h3>
                     <table className="table">
                         <thead>
                             <tr>
