@@ -295,8 +295,6 @@ app.post('/addSemester', (req, res) => {
     });
 });
 
-
-
 app.post('/addStudentSemester', (req, res) => {
     const { studentId, semesterId } = req.body;
 
@@ -326,5 +324,46 @@ app.post('/addStudentSemester', (req, res) => {
         }
     });
 });
+
+app.get('/showDB', (req, res) => {
+    const sqlSemester = `SELECT * FROM Semester`;
+    const sqlStudent = `SELECT * FROM Student`;
+    const sqlStudentSemester = `SELECT * FROM StudentSemester`;
+    const sqlUsers = `SELECT * FROM Users`;
+
+    // Use Promise.all to execute all queries concurrently
+    Promise.all([
+        queryDatabase(sqlSemester),
+        queryDatabase(sqlStudent),
+        queryDatabase(sqlStudentSemester),
+        queryDatabase(sqlUsers)
+    ])
+        .then(([semesterData, studentData, studentSemesterData, userData]) => {
+            const responseData = {
+                semesters: semesterData,
+                students: studentData,
+                studentSemesters: studentSemesterData,
+                users: userData
+            };
+            res.status(200).json(responseData);
+        })
+        .catch(err => {
+            console.error('Error fetching data:', err);
+            res.status(500).json({ message: 'Error fetching data' });
+        });
+});
+
+// Function to execute a single SQL query
+function queryDatabase(sql) {
+    return new Promise((resolve, reject) => {
+        con.query(sql, (err, results) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+}
 
 console.log(blockchain);

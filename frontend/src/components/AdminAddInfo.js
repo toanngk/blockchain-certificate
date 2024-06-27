@@ -242,30 +242,3 @@ const AddInfo = ({ userRole }) => {
 };
 
 export default AddInfo;
-
-// const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     const data = {
-//         studentId: Number(studentId),
-//         semesterId: Number(semesterId), // Include semesterId
-//         subject: subject,
-//         grade: Number(grade),
-//         issuedDate: issuedDate
-//     };
-
-//     try {
-//         // First, add student to semester if not already added
-//         const response = await axios.post(`${EXPRESS_API_URL}/addStudentSemester`, { studentId: Number(studentId), semesterId: Number(semesterId) });
-//         if (response.data.message !== 'Student already in semester') {
-//             console.log(response.data.message);
-//         }
-
-//         // Then, add the grade
-//         const res = await axios.post(`${EXPRESS_API_URL}/add`, data);
-//         console.log(res);
-//         setAddMessage(res.data.message);
-//     } catch (error) {
-//         console.error('Error submitting data:', error);
-//     }
-// };
-

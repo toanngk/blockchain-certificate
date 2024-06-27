@@ -2,6 +2,7 @@ const crypto = require('crypto'), SHA256 = message => crypto.createHash('sha256'
 const EC = require('elliptic').ec, ec = new EC('secp256k1');
 const { Blockchain } = require('./blockchain');
 const { getBlockchain, saveBlockchain } = require('./sharedBlockchain');
+const blockchainData = require('./blockchain.json');
 
 const privateKey = 'bc997946ac6a2bc99622197a2526b3cc36a23051cee4f3c4beb715134d3285db';
 const keyPair = ec.keyFromPrivate(privateKey, 'hex');
@@ -295,7 +296,6 @@ app.post('/addSemester', (req, res) => {
     });
 });
 
-
 app.post('/addStudentSemester', (req, res) => {
     const { studentId, semesterId } = req.body;
 
@@ -326,35 +326,65 @@ app.post('/addStudentSemester', (req, res) => {
     });
 });
 
+app.get('/semester/:id/blockchainId', (req, res) => {
+    const semesterId = req.params.id;
+
+    const sql = 'SELECT BlockchainID FROM Semester WHERE SemesterID = ?';
+    con.query(sql, [semesterId], (err, results) => {
+        if (err) {
+            console.error('Error retrieving BlockchainID:', err);
+            res.status(500).json({ message: 'Error retrieving BlockchainID' });
+            return;
+        }
+
+        if (results.length === 0) {
+            res.status(404).json({ message: 'Semester not found' });
+        } else {
+            res.status(200).json({ blockchainId: results[0].BlockchainID });
+        }
+    });
+});
+
+app.get('/showDB', (req, res) => {
+    const sqlSemester = `SELECT * FROM Semester`;
+    const sqlStudent = `SELECT * FROM Student`;
+    const sqlStudentSemester = `SELECT * FROM StudentSemester`;
+    const sqlUsers = `SELECT * FROM Users`;
+
+    // Use Promise.all to execute all queries concurrently
+    Promise.all([
+        queryDatabase(sqlSemester),
+        queryDatabase(sqlStudent),
+        queryDatabase(sqlStudentSemester),
+        queryDatabase(sqlUsers)
+    ])
+        .then(([semesterData, studentData, studentSemesterData, userData]) => {
+            const responseData = {
+                semesters: semesterData,
+                students: studentData,
+                studentSemesters: studentSemesterData,
+                users: userData
+            };
+            res.status(200).json(responseData);
+        })
+        .catch(err => {
+            console.error('Error fetching data:', err);
+            res.status(500).json({ message: 'Error fetching data' });
+        });
+});
+
+// Function to execute a single SQL query
+function queryDatabase(sql) {
+    return new Promise((resolve, reject) => {
+        con.query(sql, (err, results) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+}
+
+
 console.log(blockchain);
-
-// // Add student to semester if not already added
-// app.post('/addStudentSemester', (req, res) => {
-//     const { studentId, semesterId } = req.body;
-
-//     // Check if student is already in the semester
-//     const checkSql = 'SELECT * FROM StudentSemester WHERE StudentID = ? AND SemesterID = ?';
-//     con.query(checkSql, [studentId, semesterId], (err, results) => {
-//         if (err) {
-//             console.error('Error executing query:', err);
-//             res.status(500).send('Error executing query');
-//             return;
-//         }
-
-//         if (results.length > 0) {
-//             res.status(200).json({ message: 'Student already in semester' });
-//         } else {
-//             // Insert new record into StudentSemester table
-//             const insertSql = 'INSERT INTO StudentSemester (StudentID, SemesterID) VALUES (?, ?)';
-//             con.query(insertSql, [studentId, semesterId], (err, result) => {
-//                 if (err) {
-//                     console.error('Error adding student to semester:', err);
-//                     res.status(500).send('Error adding student to semester');
-//                     return;
-//                 }
-//                 console.log('Student added to semester successfully');
-//                 res.status(201).json({ message: 'Student added to semester successfully' });
-//             });
-//         }
-//     });
-// });

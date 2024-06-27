@@ -25,7 +25,6 @@ const App = () => {
         }
     };
 
-
     // Function to handle user logout
     const handleLogout = () => {
         setLoggedIn(false);

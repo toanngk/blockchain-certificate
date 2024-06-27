@@ -4,9 +4,13 @@
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 600px;
+    max-width: 800px;
     margin: 2rem auto;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Center align items horizontally */
 }
 
 .certificate-container h1 {
@@ -22,9 +26,47 @@
     color: #333;
 }
 
-.certificate-container .label {
-    font-weight: bold;
-    color: #555;
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.data-table th,
+.data-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+.data-table th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+.test-buttons {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.test-buttons button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #282c34;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.test-buttons button:hover {
+    background-color: #404046;
+}
+
+.test-results {
+    margin-top: 1rem;
 }
 
 .no-data {
