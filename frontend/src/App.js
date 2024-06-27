@@ -48,7 +48,7 @@ const App = () => {
                             <Link to="/search" className="nav-link">Tìm Kiếm</Link>
                             <Link to="/certificate" className="nav-link">Chứng Chỉ</Link>
                             <Link to="/admin" className="nav-link">Quản Trị</Link>
-                            <Link to="/test" className="nav-link">Test</Link>
+                            {/* <Link to="/test" className="nav-link">Test</Link> */}
                             <button onClick={handleLogout} className="nav-link">Đăng Xuất</button>
                         </>
                     )}

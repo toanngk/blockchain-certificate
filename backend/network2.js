@@ -258,4 +258,46 @@ app.post('/signup', (req, res) => {
     });
 });
 
+app.post('/addStudent', (req, res) => {
+    const { studentId, fullName } = req.body;
+
+    // Insert new student into Student table
+    const sql = 'INSERT INTO Student (StudentID, FullName) VALUES (?, ?)';
+    con.query(sql, [studentId, fullName], (err, result) => {
+        if (err) {
+            console.error('Error adding student:', err);
+            res.status(500).send('Error adding student');
+            return;
+        }
+        console.log('Student added successfully');
+        res.status(201).json({ message: 'Student added successfully' });
+    });
+});
+
+app.get('/getLastBlockHash', (req, res) => {
+    try {
+        const lastBlockHash = getLastBlockHash();
+        res.json({ lastBlockHash });
+    } catch (error) {
+        console.error('Error fetching last block hash:', error);
+        res.status(500).json({ error: 'Failed to retrieve last block hash' });
+    }
+});
+
+app.post('/addSemester', (req, res) => {
+    const { currentHash } = req.body;
+
+    // Insert currentHash into Semester table
+    const sql = 'INSERT INTO Semester (BlockchainId) VALUES (?)';
+    con.query(sql, [currentHash], (err, result) => {
+        if (err) {
+            console.error('Error adding semester data:', err);
+            res.status(500).json({ message: 'Error adding semester data' });
+            return;
+        }
+        console.log('Semester data added successfully');
+        res.status(201).json({ message: 'Semester data added successfully' });
+    });
+});
+
 console.log(blockchain);

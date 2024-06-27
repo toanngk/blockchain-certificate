@@ -2,6 +2,7 @@ const crypto = require('crypto'), SHA256 = message => crypto.createHash('sha256'
 const EC = require('elliptic').ec, ec = new EC('secp256k1');
 const { Blockchain } = require('./blockchain');
 const { getBlockchain, saveBlockchain } = require('./sharedBlockchain');
+const { getLastBlockHash } = require('./blockchain');
 
 const privateKey = 'bc997946ac6a2bc99622197a2526b3cc36a23051cee4f3c4beb715134d3285db';
 const keyPair = ec.keyFromPrivate(privateKey, 'hex');
@@ -258,4 +259,78 @@ app.post('/signup', (req, res) => {
     });
 });
 
+app.post('/addStudent', (req, res) => {
+    const { studentId, fullName } = req.body;
+
+    // Insert new student into Student table
+    const sql = 'INSERT INTO Student (StudentID, FullName) VALUES (?, ?)';
+    con.query(sql, [studentId, fullName], (err, result) => {
+        if (err) {
+            console.error('Error adding student:', err);
+            res.status(500).send('Error adding student');
+            return;
+        }
+        console.log('Student added successfully');
+        res.status(201).json({ message: 'Student added successfully' });
+    });
+});
+
+app.get('/getLastBlockHash', (req, res) => {
+    try {
+        const lastBlockHash = getLastBlockHash();
+        res.json({ lastBlockHash });
+    } catch (error) {
+        console.error('Error fetching last block hash:', error);
+        res.status(500).json({ error: 'Failed to retrieve last block hash' });
+    }
+});
+
+app.post('/addSemester', (req, res) => {
+    const { currentHash } = req.body;
+
+    // Insert currentHash into Semester table
+    const sql = 'INSERT INTO Semester (BlockchainId) VALUES (?)';
+    con.query(sql, [currentHash], (err, result) => {
+        if (err) {
+            console.error('Error adding semester data:', err);
+            res.status(500).json({ message: 'Error adding semester data' });
+            return;
+        }
+        console.log('Semester data added successfully');
+        res.status(201).json({ message: 'Semester data added successfully' });
+    });
+});
+
+
 console.log(blockchain);
+
+// // Add student to semester if not already added
+// app.post('/addStudentSemester', (req, res) => {
+//     const { studentId, semesterId } = req.body;
+
+//     // Check if student is already in the semester
+//     const checkSql = 'SELECT * FROM StudentSemester WHERE StudentID = ? AND SemesterID = ?';
+//     con.query(checkSql, [studentId, semesterId], (err, results) => {
+//         if (err) {
+//             console.error('Error executing query:', err);
+//             res.status(500).send('Error executing query');
+//             return;
+//         }
+
+//         if (results.length > 0) {
+//             res.status(200).json({ message: 'Student already in semester' });
+//         } else {
+//             // Insert new record into StudentSemester table
+//             const insertSql = 'INSERT INTO StudentSemester (StudentID, SemesterID) VALUES (?, ?)';
+//             con.query(insertSql, [studentId, semesterId], (err, result) => {
+//                 if (err) {
+//                     console.error('Error adding student to semester:', err);
+//                     res.status(500).send('Error adding student to semester');
+//                     return;
+//                 }
+//                 console.log('Student added to semester successfully');
+//                 res.status(201).json({ message: 'Student added to semester successfully' });
+//             });
+//         }
+//     });
+// });
