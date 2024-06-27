@@ -167,28 +167,7 @@ const AddInfo = ({ userRole }) => {
                 </form>
                 <h3>{addMessage}</h3>
             </div>
-
-            <div className="test-buttons">
-                <button onClick={handleValidate} className="btn-action">Validate</button>
-                <button onClick={handleGetChain} className="btn-action">Get Chain</button>
-            </div>
-
-            <div className="test-results">
-                <h2>New Block:</h2>
-                <h3>{validateMessage}</h3>
-                {addedBlock ? (
-                    renderObject(addedBlock)
-                ) : (
-                    <p>Added block will be shown here</p>
-                )}
-                <h2>Chain:</h2>
-                {chain ? (
-                    renderObject(chain)
-                ) : (
-                    <p>Blockchain will be shown here</p>
-                )}
-            </div>
-
+            
             {/* Form for adding students */}
             <div className="addInfo-form">
                 <h2>Thêm sinh viên</h2>
@@ -215,6 +194,29 @@ const AddInfo = ({ userRole }) => {
                 </form>
                 <h3>{studentMessage}</h3>
             </div>
+
+            <div className="addInfo-form">
+                <h2>Thêm dữ liệu và Block</h2>
+                <div className="test-buttons">
+                    <button onClick={handleValidate} className="btn-action">Validate</button>
+                    <button onClick={handleGetChain} className="btn-action">Get Chain</button>
+                </div>
+
+                <h2>New added Block</h2>
+                <h3>{validateMessage}</h3>
+                {addedBlock ? (
+                    renderObject(addedBlock)
+                ) : (
+                    <p>Added block will be shown here</p>
+                )}
+                <h2>Blockchain</h2>
+                {chain ? (
+                    renderObject(chain)
+                ) : (
+                    <p>Blockchain will be shown here</p>
+                )}
+            </div>
+
         </div>
     );
 };
